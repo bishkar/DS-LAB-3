@@ -1,7 +1,9 @@
 """Task 3: Bag of Words (BoW) Implementation."""
 from typing import List
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
+
+from src.utils import vectorize
+from src.validation import validate_string_list
 
 
 def bag_of_words(texts: List[str]) -> pd.DataFrame:
@@ -26,8 +28,8 @@ def bag_of_words(texts: List[str]) -> pd.DataFrame:
         0    0  1   0     1    1
         1    1  0   1     0    1
     """
-    pass
-    return df
+    validate_string_list(texts, "Input texts", "texts")
+    return vectorize(texts, "bow")
 
 
 if __name__ == "__main__":

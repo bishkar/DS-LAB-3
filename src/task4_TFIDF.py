@@ -1,7 +1,9 @@
 """Task 4: TF-IDF Calculation."""
 from typing import List
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
+
+from src.utils import vectorize
+from src.validation import validate_string_list
 
 
 def calculate_tfidf(texts: List[str]) -> pd.DataFrame:
@@ -26,8 +28,8 @@ def calculate_tfidf(texts: List[str]) -> pd.DataFrame:
         0  0.000000  0.579739  0.000000  0.579739  0.447214
         1  0.652491  0.000000  0.652491  0.000000  0.385372
     """
-    pass
-    return df
+    validate_string_list(texts, "Input texts", "texts")
+    return vectorize(texts, "tfidf")
 
 
 if __name__ == "__main__":

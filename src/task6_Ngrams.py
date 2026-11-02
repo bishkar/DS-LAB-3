@@ -2,7 +2,9 @@
 from typing import List, Tuple, Dict
 from collections import Counter
 from nltk import ngrams
-from nltk.tokenize import word_tokenize
+
+from src.utils import tokenize
+from src.validation import check_type, validate_list, validate_text
 
 
 def generate_ngrams(text: str, n: int) -> List[Tuple[str, ...]]:
@@ -24,8 +26,14 @@ def generate_ngrams(text: str, n: int) -> List[Tuple[str, ...]]:
         >>> generate_ngrams("I love NLP", 2)
         [('I', 'love'), ('love', 'NLP')]
     """
-    pass
-    return n_grams
+    # Type errors take precedence over value errors for both arguments
+    check_type(text, str, "Text must be a string")
+    check_type(n, int, "N must be an integer")
+    validate_text(text, "Text")
+    if n < 1:
+        raise ValueError("N must be at least 1")
+
+    return list(ngrams(tokenize(text), n))
 
 
 def count_ngrams(ngrams_list: List[Tuple[str, ...]]) -> Dict[Tuple[str, ...], int]:
@@ -48,8 +56,8 @@ def count_ngrams(ngrams_list: List[Tuple[str, ...]]) -> Dict[Tuple[str, ...], in
         >>> count_ngrams(ngrams_list)
         {('I', 'love'): 2, ('love', 'NLP'): 1}
     """
-    pass
-    return dict(ngram_counts)
+    validate_list(ngrams_list, "N-grams list")
+    return dict(Counter(ngrams_list))
 
 
 if __name__ == "__main__":

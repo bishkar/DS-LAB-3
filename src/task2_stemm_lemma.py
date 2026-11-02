@@ -2,6 +2,11 @@
 from typing import Dict, List
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 
+from src.validation import validate_string_list
+
+_STEMMER = PorterStemmer()
+_LEMMATIZER = WordNetLemmatizer()
+
 
 def stem_and_lemmatize(tokens: List[str]) -> Dict[str, List[str]]:
     """
@@ -23,7 +28,10 @@ def stem_and_lemmatize(tokens: List[str]) -> Dict[str, List[str]]:
         {'original': ['running', 'cats'], 'stemmed': ['run', 'cat'], 
          'lemmatized': ['running', 'cat']}
     """
-    pass
+    validate_string_list(tokens, "Input tokens", "tokens")
+
+    stemmed = [_STEMMER.stem(token) for token in tokens]
+    lemmatized = [_LEMMATIZER.lemmatize(token) for token in tokens]
 
     return {
         "original": tokens,

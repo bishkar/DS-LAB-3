@@ -1,7 +1,9 @@
 """Task 1: Text Cleaning and Tokenization."""
 import re
 from typing import List
-from nltk.tokenize import word_tokenize
+
+from src.utils import tokenize
+from src.validation import validate_text
 
 
 def clean_and_tokenize(text: str) -> List[str]:
@@ -22,8 +24,10 @@ def clean_and_tokenize(text: str) -> List[str]:
         >>> clean_and_tokenize("Hello, World!")
         ['hello', 'world']
     """
-    pass
-    return tokens
+    validate_text(text, "Input text")
+
+    cleaned = re.sub(r"[^\w\s]|_", " ", text).lower()
+    return tokenize(cleaned)
 
 
 if __name__ == "__main__":

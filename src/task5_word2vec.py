@@ -2,6 +2,8 @@
 from typing import List, Tuple
 from gensim.models import Word2Vec
 
+from src.validation import Word2VecParams, check_type, validate_list
+
 
 def train_word2vec(
     sentences: List[List[str]], 
@@ -33,8 +35,17 @@ def train_word2vec(
         >>> 'nlp' in model.wv
         True
     """
-    pass
-    return model
+    validate_list(
+        sentences, "Sentences", List[str],
+        "Sentences must be a list of lists of string tokens", TypeError,
+    )
+    if not any(sentences):
+        raise ValueError("Sentences must contain at least one token")
+    params = Word2VecParams(
+        vector_size=vector_size, window=window, min_count=min_count, workers=workers
+    )  # pydantic ValidationError is a ValueError
+
+    return Word2Vec(sentences=sentences, **params.model_dump())
 
 
 def find_similar_words(model: Word2Vec, word: str, topn: int = 10) -> List[Tuple[str, float]]:
@@ -61,9 +72,13 @@ def find_similar_words(model: Word2Vec, word: str, topn: int = 10) -> List[Tuple
         >>> len(similar) <= 2
         True
     """
-    pass
+    if not isinstance(model, Word2Vec):
+        raise TypeError("Model must be a Word2Vec model")
+    check_type(word, str, "Word must be a string")
+    if word not in model.wv:
+        raise KeyError(f"Word '{word}' not in vocabulary")
 
-    return model.wv.most_similar(word, topn=topn)
+    return [(w, float(score)) for w, score in model.wv.most_similar(word, topn=topn)]
 
 
 if __name__ == "__main__":
