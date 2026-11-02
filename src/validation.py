@@ -23,7 +23,7 @@ from pydantic import (
 @lru_cache(maxsize=None)
 def _adapter(tp: Any) -> TypeAdapter:
     """Build (and cache) a strict TypeAdapter for ``tp``."""
-    return TypeAdapter(tp, config=ConfigDict(strict=True))
+    return TypeAdapter(tp, config=ConfigDict(strict=True, arbitrary_types_allowed=True))
 
 
 def check_type(value: Any, tp: Any, message: str, error: Type[Exception] = TypeError) -> Any:
