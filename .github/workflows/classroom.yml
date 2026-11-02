@@ -1,0 +1,102 @@
+name: GitHub Classroom Workflow
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  test:
+    name: Run NLP Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Create virtual environment
+        run: |
+          python -m venv venv
+
+      - name: Activate venv and install dependencies
+        run: |
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Download NLTK data
+        run: |
+          source venv/bin/activate
+          python -c "import nltk; nltk.download('punkt'); nltk.download('wordnet'); nltk.download('omw-1.4')"
+
+      - name: Run Task 1 Tests (Text Cleaning & Tokenization)
+        run: |
+          source venv/bin/activate
+          pytest tests/test_task1.py -v --tb=short
+        continue-on-error: false
+
+      - name: Run Task 2 Tests (Stemming & Lemmatization)
+        run: |
+          source venv/bin/activate
+          pytest tests/test_task2.py -v --tb=short
+        continue-on-error: false
+
+      - name: Run Task 3 Tests (Bag of Words)
+        run: |
+          source venv/bin/activate
+          pytest tests/test_task3.py -v --tb=short
+        continue-on-error: false
+
+      - name: Run Task 4 Tests (TF-IDF)
+        run: |
+          source venv/bin/activate
+          pytest tests/test_task4.py -v --tb=short
+        continue-on-error: false
+
+      - name: Run Task 5 Tests (Word2Vec)
+        run: |
+          source venv/bin/activate
+          pytest tests/test_task5.py -v --tb=short
+        continue-on-error: false
+
+      - name: Run Task 6 Tests (N-grams)
+        run: |
+          source venv/bin/activate
+          pytest tests/test_task6.py -v --tb=short
+        continue-on-error: false
+
+      - name: Run Task 7 Tests (NLP Pipeline)
+        run: |
+          source venv/bin/activate
+          pytest tests/test_task7.py -v --tb=short
+        continue-on-error: false
+
+      - name: Generate Test Report
+        if: always()
+        run: |
+          source venv/bin/activate
+          pytest tests/ --tb=short --junitxml=test-results.xml
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: test-results.xml
+          check_name: NLP Test Results
+          comment_title: NLP Test Results Summary
